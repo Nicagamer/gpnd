@@ -1,1 +1,27 @@
+name: SSH Access
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */5 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ssh-runner
+  cancel-in-progress: true
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true   # solo el usuario que lanzó el workflow puede conectarse
